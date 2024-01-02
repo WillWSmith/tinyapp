@@ -17,6 +17,7 @@
     <title>TinyApp</title>
   </head>
   <body>
+    <%- include(`partials/_header`) %>
     <main style="margin: 1em;">
       <h3>My URLs</h3>
       <table class="table">
@@ -29,14 +30,12 @@
         <tbody>
           <% for (let id in urls) { %>
             <tr>
-              <td><%= id %></td>
+              <td><a href="/urls/<%= id %>"><%= id %></a></td>
               <td><%= urls[id] %></td>
             </tr>
           <% } %>
-        </tbody>
+        </tbody>        
       </table>
-      <!-- Bootstrap button class for styling -->
-      <a href="#" class="btn btn-primary">Create Short URL</a>
     </main>
     <!-- Bootstrap JS -->
     <script
