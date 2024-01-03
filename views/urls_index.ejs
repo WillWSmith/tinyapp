@@ -25,6 +25,7 @@
           <tr>
             <th scope="col">Short URL ID</th>
             <th scope="col">Long URL</th>
+            <th scope="col">Delete</th>
           </tr>
         </thead>
         <tbody>
@@ -32,6 +33,12 @@
             <tr>
               <td><a href="/urls/<%= id %>"><%= id %></a></td>
               <td><%= urls[id] %></td>
+              <td>
+                <!-- Add a form for each shortened URL with a "Delete" button -->
+                <form method="POST" action="/urls/<%= id %>/delete">
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+              </td>
             </tr>
           <% } %>
         </tbody>        
