@@ -15,6 +15,26 @@
       crossorigin="anonymous"
     />
     <title>TinyApp</title>
+
+      <!-- Add the CSS for the "Delete" button -->
+  <style>
+    /* Style for the Delete button */
+    .delete-button {
+      background-color: #ff5733; /* Red color */
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.1s ease;
+    }
+
+    /* Hover effect */
+    .delete-button:hover {
+      background-color: #ff0000; /* Darker red on hover */
+      transform: scale(1.1); /* Slightly increase size on hover */
+    }
+  </style>
   </head>
   <body>
     <%- include(`partials/_header`) %>
