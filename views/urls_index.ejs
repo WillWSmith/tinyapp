@@ -29,9 +29,25 @@
         transition: background-color 0.3s ease, transform 0.1s ease;
       }
 
+      /* Style for the Edit button */
+      .edit-button {
+        background-color: #007bff; /* Blue color */
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.1s ease;
+      }
+
       /* Hover effect */
       .delete-button:hover {
         background-color: #ff0000; /* Darker red on hover */
+        transform: scale(1.1); /* Slightly increase size on hover */
+      }
+
+      .edit-button:hover {
+        background-color: #0056b3; /* Darker blue on hover */
         transform: scale(1.1); /* Slightly increase size on hover */
       }
     </style>
@@ -55,9 +71,11 @@
               <td><%= id %></td>
               <td><%= urls[id] %></td>
               <td>
-                <!-- Add an Edit link for each URL -->
-                <a href="/urls/<%= id %>" class="btn btn-primary">Edit</a>
-              </td>
+                <!-- Add an Edit button for each URL -->
+                <form method="GET" action="/urls/<%= id %>">
+                  <button type="submit" class="btn btn-primary edit-button">Edit</button>
+                </form>
+              </td>              
               <td>
                 <!-- Add a form for each shortened URL with a "Delete" button -->
                 <form method="POST" action="/urls/<%= id %>/delete">
