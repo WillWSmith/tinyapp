@@ -68,6 +68,17 @@ app.post("/urls/:id/delete", (req, res) => {
   }
 });
 
+app.post("/urls/:id", (req, res) => {
+  const shortURLId = req.params.id;
+  const newLongURL = req.body.newLongURL; // Assuming you have a form field named "newLongURL"
+
+  // Update the long URL value in your urlDatabase
+  urlDatabase[shortURLId] = newLongURL;
+
+  // Redirect the client back to the /urls page
+  res.redirect("/urls");
+});
+
 app.get("/u/:id", (req, res) => {
   const shortURL = req.params.id;
   const longURL = urlDatabase[shortURL];
