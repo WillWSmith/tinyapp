@@ -16,25 +16,25 @@
     />
     <title>TinyApp</title>
 
-      <!-- Add the CSS for the "Delete" button -->
-  <style>
-    /* Style for the Delete button */
-    .delete-button {
-      background-color: #ff5733; /* Red color */
-      color: white;
-      border: none;
-      border-radius: 5px;
-      padding: 8px 12px;
-      cursor: pointer;
-      transition: background-color 0.3s ease, transform 0.1s ease;
-    }
+    <!-- Add the CSS for the "Delete" button -->
+    <style>
+      /* Style for the Delete button */
+      .delete-button {
+        background-color: #ff5733; /* Red color */
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.1s ease;
+      }
 
-    /* Hover effect */
-    .delete-button:hover {
-      background-color: #ff0000; /* Darker red on hover */
-      transform: scale(1.1); /* Slightly increase size on hover */
-    }
-  </style>
+      /* Hover effect */
+      .delete-button:hover {
+        background-color: #ff0000; /* Darker red on hover */
+        transform: scale(1.1); /* Slightly increase size on hover */
+      }
+    </style>
   </head>
   <body>
     <%- include(`partials/_header`) %>
@@ -45,18 +45,23 @@
           <tr>
             <th scope="col">Short URL ID</th>
             <th scope="col">Long URL</th>
+            <th scope="col">Edit</th> <!-- Add Edit column header -->
             <th scope="col">Delete</th>
           </tr>
         </thead>
         <tbody>
           <% for (let id in urls) { %>
             <tr>
-              <td><a href="/urls/<%= id %>"><%= id %></a></td>
+              <td><%= id %></td>
               <td><%= urls[id] %></td>
+              <td>
+                <!-- Add an Edit link for each URL -->
+                <a href="/urls/<%= id %>" class="btn btn-primary">Edit</a>
+              </td>
               <td>
                 <!-- Add a form for each shortened URL with a "Delete" button -->
                 <form method="POST" action="/urls/<%= id %>/delete">
-                  <button type="submit" class="btn btn-danger">Delete</button>
+                  <button type="submit" class="btn btn-danger delete-button">Delete</button>
                 </form>
               </td>
             </tr>
