@@ -56,6 +56,18 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
+app.post("/urls/:id/delete", (req, res) => {
+  const shortURL = req.params.id;
+
+  // Check if the shortURL exists in the urlDatabase
+  if (urlDatabase.hasOwnProperty(shortURL)) {
+    delete urlDatabase[shortURL]; // Remove the URL
+    res.redirect("/urls"); // Redirect back to the urls_index page
+  } else {
+    res.status(404).send("Short URL not found"); // Handle the case where the short URL doesn't exist
+  }
+});
+
 app.get("/u/:id", (req, res) => {
   const shortURL = req.params.id;
   const longURL = urlDatabase[shortURL];
