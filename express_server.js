@@ -45,3 +45,22 @@ app.post("/urls", (req, res) => {
   console.log(req.body); // Log the POST request body to the console
   res.send("Ok"); // Respond with 'Ok' (we will replace this)
 });
+
+function generateRandomString() {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let randomString;
+  //ensures no unique id will show up more than once
+  while (true) {
+    randomString = ``;
+    for (let i = 0; i < 6; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length)
+      randomString += characters.charAt(randomIndex);
+    }
+    // exit the loop if the generated string does not exist in database
+    if (!urlDatabase[randomString]) {
+      break;
+    }
+  }
+
+  return randomString;
+}
