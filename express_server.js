@@ -42,6 +42,12 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
+  let longURL = req.body.longURL;
+//check if longURL is undefined or an empty string
+  if (!longURL || longURL.trim() === "") {
+    return res.status(400).send("Invalid URL");
+  }
+
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
   console.log(req.body);
@@ -61,7 +67,7 @@ app.get("/u/:id", (req, res) => {
   }
 });
 
-
+//generates a random unique id
 function generateRandomString() {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let randomString;
