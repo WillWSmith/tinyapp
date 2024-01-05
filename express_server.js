@@ -104,6 +104,12 @@ app.post("/login", (req, res) => {
   res.redirect(`/urls`);
 });
 
+app.post("/logout", (req, res) => {
+  const username = req.body.username;
+  res.clearCookie("username", username);
+  res.redirect(`/urls`);
+})
+
 //generates a random unique id
 function generateRandomString() {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';

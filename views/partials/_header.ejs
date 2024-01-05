@@ -19,7 +19,12 @@
       </div>
     </div>
     <% if (typeof username !== `undefined` && username) { %>
-      <span>Welcome, <%= username %></span>
+      <span>Welcome, <strong><%= username %></strong></span>
+      <form action="/logout" method="POST">
+        <div style="display: inline; margin-left: 10px;">
+        <button type="submit" class="btn btn-primary">Logout</button>
+        </div>
+      </form>
     <% } else { %>
     <form action="/login" method="POST">
       <div style="display: inline;">
