@@ -140,8 +140,17 @@ app.post("/register", (req, res) => {
   const id = generateRandomString();
   const email = req.body.email;
   const password = req.body.password;
-  const user = { id, email, password };
 
+  if (email === "" || password === "") {
+    res.status(400).send("Please enter an email and password.");
+  };
+
+  const existingUser = getUserByEmail(email);
+  if (existingUser) {
+    return res.status(400).send("Email already in use.");
+  }
+
+  const user = { id, email, password };
   users[id] = user;
   res.cookie("user_id", id);
   res.redirect("/urls");
@@ -167,4 +176,13 @@ function generateRandomString() {
   }
 
   return randomString;
-}
+};
+
+function getUserByEmail(email) {
+  for (const userId in users) {
+    if (users[userId].email === email) {
+      return users[userId];
+    }
+  }
+  return null;
+};
