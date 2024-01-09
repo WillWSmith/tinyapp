@@ -41,27 +41,30 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
 app.get("/urls/new", (req, res) => {
-  const templateVars = {
-    username: req.cookies["username"]
-  };
+  const userId = req.cookies["user_id"];
+  const user = users[userId];
+
+  const templateVars = { user };
   res.render("urls_new", templateVars);
 });
 
 app.get("/urls", (req, res) => {
+  const userId = req.cookies["user_id"];
+  const user = users[userId];
+
   const templateVars = {
-    username: req.cookies["username"],
+    user,
     urls: urlDatabase
   };
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/:id", (req, res) => {
+  const userId = req.cookies["user_id"];
+  const user = users[userId];
   const longURL = urlDatabase[req.params.id];
-  const templateVars = { username: req.cookies["username"], id: req.params.id, longURL: longURL };
+  const templateVars = { user, id: req.params.id, longURL: longURL };
   res.render("urls_show", templateVars);
 });
 
