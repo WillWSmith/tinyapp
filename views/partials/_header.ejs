@@ -1,3 +1,4 @@
+<!-- _header.ejs -->
 <header>
   <nav class="navbar navbar-expand-md navbar-dark bg-success">
     <a class="navbar-brand" href="/urls">TinyApp</a>
@@ -18,22 +19,13 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
-    <% if (typeof username !== `undefined` && username) { %>
-      <span>Welcome, <strong><%= username %></strong></span>
+    <% if (user) { %>
+      <span>Welcome, <strong><%= user.email %></strong></span>
       <form action="/logout" method="POST">
         <div style="display: inline; margin-left: 10px;">
-        <button type="submit" class="btn btn-primary">Logout</button>
+          <button type="submit" class="btn btn-primary">Logout</button>
         </div>
       </form>
-    <% } else { %>
-    <form action="/login" method="POST">
-      <div style="display: inline;">
-        <input type="text" id="username" name="username" placeholder="Username" required>
-      </div>
-      <div style="display: inline;">
-        <button type="submit" class="btn btn-primary">Login</button>
-      </div>
-    </form>
     <% } %>
   </nav>
 </header>
