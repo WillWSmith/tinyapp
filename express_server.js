@@ -8,10 +8,26 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+//URL DATABASE
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+//USER DATABASE
+const users = {
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur",
+  },
+  user2RandomID: {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk",
+  },
+};
+
+// ROUTES
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -78,7 +94,7 @@ app.post("/urls/:id/delete", (req, res) => {
 
 app.post("/urls/:id", (req, res) => {
   const shortURLId = req.params.id;
-  const newLongURL = req.body.newLongURL; // Assuming you have a form field named "newLongURL"
+  const newLongURL = req.body.newLongURL;
 
   // Update the long URL value in your urlDatabase
   urlDatabase[shortURLId] = newLongURL;
@@ -117,6 +133,19 @@ app.get("/register", (req, res) => {
   res.render("register", templateVars);
 });
 
+app.post("/register", (req, res) => {
+  const id = generateRandomString();
+  const email = req.body.email;
+  const password = req.body.password;
+  const user = { id, email, password };
+
+  users[id] = user;
+  res.cookie("user_id", id);
+  res.redirect("/urls");
+
+});
+
+//FUNCTIONS
 //generates a random unique id
 function generateRandomString() {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -129,7 +158,7 @@ function generateRandomString() {
       randomString += characters.charAt(randomIndex);
     }
     // exit the loop if the generated string does not exist in database
-    if (!urlDatabase[randomString]) {
+    if (!urlDatabase[randomString] || !users[randomString]) {
       break;
     }
   }
