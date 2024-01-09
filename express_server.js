@@ -107,7 +107,15 @@ app.post("/login", (req, res) => {
 app.post("/logout", (req, res) => {
   res.clearCookie("username");
   res.redirect(`/urls`);
-})
+});
+
+app.get("/register", (req, res) => {
+  const templateVars = {
+    email: "",
+    password: "",
+  };
+  res.render("register", templateVars);
+});
 
 //generates a random unique id
 function generateRandomString() {
