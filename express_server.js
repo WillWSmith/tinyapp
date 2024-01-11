@@ -121,25 +121,35 @@ app.get("/login", (req, res) => {
   const templateVars = {
     email: "",
     password: "",
+    user: req.cookies["user_id"] ? users[req.cookies["user_id"]] : null
   };
   res.render("login", templateVars);
 });
 
 app.post("/login", (req, res) => {
-  const username = req.body.username;
-  res.cookie(`username`, username);
+  const email = req.body.email;
+  const password = req.body.password;
+
+  const user = getUserByEmail(email);
+
+  if (!user || user.password !== password) {
+    res.status(403).send("Incorrect email or password.");
+  }
+
+  res.cookie("user_id", user.id);
   res.redirect(`/urls`);
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("username");
-  res.redirect(`/urls`);
+  res.clearCookie("user_id");
+  res.redirect(`/login`);
 });
 
 app.get("/register", (req, res) => {
   const templateVars = {
     email: "",
     password: "",
+    user: req.cookies["user_id"] ? users[req.cookies["user_id"]] : null
   };
   res.render("register", templateVars);
 });
