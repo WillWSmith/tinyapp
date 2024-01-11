@@ -117,6 +117,14 @@ app.get("/u/:id", (req, res) => {
   }
 });
 
+app.get("/login", (req, res) => {
+  const templateVars = {
+    email: "",
+    password: "",
+  };
+  res.render("login", templateVars);
+});
+
 app.post("/login", (req, res) => {
   const username = req.body.username;
   res.cookie(`username`, username);
