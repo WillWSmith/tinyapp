@@ -26,6 +26,11 @@
           <button type="submit" class="btn btn-primary">Logout</button>
         </div>
       </form>
+    <% } else { %>
+      <a href="/login" class="btn btn-primary">Login</a>
+      <div style="display: inline; margin-left: 10px;">
+      <a href="/register" class="btn btn-primary">Register</a>
+    </div>
     <% } %>
   </nav>
 </header>
