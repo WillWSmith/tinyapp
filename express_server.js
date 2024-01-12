@@ -10,8 +10,14 @@ app.use(cookieParser());
 
 // URL DATABASE
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  b2xVn2: {
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "000001",
+  },
+  bsm5xK: {
+    longURL: "http://www.google.com",
+    userID: "000002",
+  },
 };
 
 // USER DATABASE
@@ -60,9 +66,14 @@ app.get("/urls", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
 
+  if (!user) {
+    return res.status(401).send("You must be logged in to view URLs. Please <a href='/login'>login</a> or <a href='/register'>register</a>.");
+  }
+
+  const userUrls = urlsForUser(userId);
   const templateVars = {
     user,
-    urls: urlDatabase
+    urls: userUrls,
   };
   res.render("urls_index", templateVars);
 });
@@ -70,13 +81,23 @@ app.get("/urls", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
-  const longURL = urlDatabase[req.params.id];
-  const templateVars = { user, id: req.params.id, longURL: longURL };
+  const urlEntry = urlDatabase[req.params.id];
+
+  if (!user) {
+    return res.status(401).send("You must be logged in to view URLs. Please <a href='/login'>login</a> or <a href='/register'>register</a>.");
+  }
+
+  if (!urlEntry || urlEntry.userID !== userId) {
+    return res.status(403).send("Access Denied. You are not the owner of this URL.");
+  }
+
+  const templateVars = { user, id: req.params.id, longURL: urlEntry.longURL };
   res.render("urls_show", templateVars);
 });
 
 app.post("/urls", checkLoggedIn, (req, res) => {
   let longURL = req.body.longURL;
+  const userId = req.cookies["user_id"];
 
   // Check if longURL is undefined or an empty string
   if (!longURL || longURL.trim() === "") {
@@ -84,39 +105,60 @@ app.post("/urls", checkLoggedIn, (req, res) => {
   }
 
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = longURL;
+  urlDatabase[shortURL] = { longURL, userID: userId };
 
   res.redirect(`/urls/${shortURL}`);
 });
 
 app.post("/urls/:id/delete", (req, res) => {
   const shortURL = req.params.id;
+  const userId = req.cookies["user_id"];
+  const urlEntry = urlDatabase[shortURL];
 
-  // Check if the shortURL exists in the urlDatabase
-  if (urlDatabase.hasOwnProperty(shortURL)) {
-    delete urlDatabase[shortURL]; // Remove the URL
+  if (!userId) {
+    return res.status(401).send("You must be logged in to delete URLs. Please <a href='/login'>login</a> or <a href='/register'>register</a>.");
   }
 
+  if (!urlEntry) {
+    return res.status(404).send("Short URL not found");
+  }
+
+  if (urlEntry.userID !== userId) {
+    return res.status(403).send("Access Denied. You are not the owner of this URL.");
+  }
+  delete urlDatabase[shortURL];
   res.redirect("/urls");
 });
 
-app.post("/urls/:id", (req, res) => {
+app.post("/urls/:id", checkLoggedIn, (req, res) => {
   const shortURLId = req.params.id;
-  const newLongURL = req.body.newLongURL;
+  const userId = req.cookies["user_id"];
+  const urlEntry = urlDatabase[shortURLId];
 
-  // Update the long URL value in your urlDatabase
-  urlDatabase[shortURLId] = newLongURL;
+  if (!userId) {
+    return res.status(401).send("You must be logged in to edit URLs. Please <a href='/login'>login</a> or <a href='/register'>register</a>.");
+  }
 
+  if (!urlEntry) {
+    return res.status(404).send("Short URL not found");
+  }
+  
+  if (urlEntry.userID !== userId) {
+    return res.status(403).send("Access Denied. You are not the owner of this URL.");
+  }
+
+  const newLongURL = req.body.longURL;
+  urlDatabase[shortURLId].longURL = newLongURL;
   // Redirect the client back to the /urls page
   res.redirect("/urls");
 });
 
 app.get("/u/:id", (req, res) => {
   const shortURL = req.params.id;
-  const longURL = urlDatabase[shortURL];
+  const urlEntry = urlDatabase[shortURL];
 
-  if (longURL) {
-    res.redirect(longURL);
+  if (urlEntry) {
+    res.redirect(urlEntry.longURL);
   } else {
     res.status(404).send("Short URL not found");
   }
@@ -236,3 +278,13 @@ function checkLoggedIn(req, res, next) {
     res.redirect("/login?redirected=unauthorized");
   }
 };
+
+function urlsForUser(id) {
+  const userUrls = {};
+  for (const shortURL in urlDatabase) {
+    if (urlDatabase[shortURL].userID === id) {
+      userUrls[shortURL] = urlDatabase[shortURL];
+    }
+  }
+  return userUrls;
+}
