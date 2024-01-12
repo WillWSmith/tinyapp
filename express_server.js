@@ -8,12 +8,13 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-//URL DATABASE
+// URL DATABASE
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
-//USER DATABASE
+
+// USER DATABASE
 const users = {
   userRandomID: {
     id: "userRandomID",
@@ -41,9 +42,15 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-app.get("/urls/new", (req, res) => {
+app.get("/urls/new", checkLoggedIn, (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
+
+  if (!user) {
+    console.log("Redirecting to /login with redirected=true");
+    res.redirect("/login?redirected=true");
+    return;
+  }
 
   const templateVars = { user };
   res.render("urls_new", templateVars);
@@ -68,17 +75,16 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-app.post("/urls", (req, res) => {
+app.post("/urls", checkLoggedIn, (req, res) => {
   let longURL = req.body.longURL;
-//check if longURL is undefined or an empty string
+
+  // Check if longURL is undefined or an empty string
   if (!longURL || longURL.trim() === "") {
     return res.status(400).send("Invalid URL");
   }
 
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
-  console.log(req.body);
-  console.log(`Short URL: ${shortURL}`);
+  urlDatabase[shortURL] = longURL;
 
   res.redirect(`/urls/${shortURL}`);
 });
@@ -89,10 +95,9 @@ app.post("/urls/:id/delete", (req, res) => {
   // Check if the shortURL exists in the urlDatabase
   if (urlDatabase.hasOwnProperty(shortURL)) {
     delete urlDatabase[shortURL]; // Remove the URL
-    res.redirect("/urls"); // Redirect back to the urls_index page
-  } else {
-    res.status(404).send("Short URL not found"); // Handle the case where the short URL doesn't exist
   }
+
+  res.redirect("/urls");
 });
 
 app.post("/urls/:id", (req, res) => {
@@ -118,12 +123,25 @@ app.get("/u/:id", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  const templateVars = {
-    email: "",
-    password: "",
-    user: req.cookies["user_id"] ? users[req.cookies["user_id"]] : null
-  };
-  res.render("login", templateVars);
+  const userId = req.cookies["user_id"];
+  const redirectedReason = req.query.redirected;
+
+  let message = null;
+  if (redirectedReason === "unauthorized") {
+    message = "You must be logged in to create a new URL.";
+  }
+
+  if (userId && users[userId]) {
+    res.redirect("/urls");
+  } else {
+    const templateVars = {
+      email: "",
+      password: "",
+      user: null,
+      message
+    };
+    res.render("login", templateVars);
+  }
 });
 
 app.post("/login", (req, res) => {
@@ -146,12 +164,17 @@ app.post("/logout", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  const templateVars = {
-    email: "",
-    password: "",
-    user: req.cookies["user_id"] ? users[req.cookies["user_id"]] : null
-  };
-  res.render("register", templateVars);
+  const userId = req.cookies["user_id"];
+  if (userId && users[userId]) {
+    res.redirect("/urls");
+  } else {
+    const templateVars = {
+      email: "",
+      password: "",
+      user: null,
+    };
+    res.render("register", templateVars);
+  }
 });
 
 app.post("/register", (req, res) => {
@@ -172,22 +195,21 @@ app.post("/register", (req, res) => {
   users[id] = user;
   res.cookie("user_id", id);
   res.redirect("/urls");
-
 });
 
-//FUNCTIONS
-//generates a random unique id
+// FUNCTIONS
+// generates a random unique id
 function generateRandomString() {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let randomString;
-  //ensures no unique id will show up more than once
+  // ensures no unique id will show up more than once
   while (true) {
     randomString = ``;
     for (let i = 0; i < 6; i++) {
       const randomIndex = Math.floor(Math.random() * characters.length)
       randomString += characters.charAt(randomIndex);
     }
-    // exit the loop if the generated string does not exist in database
+    // exit the loop if the generated string does not exist in the database
     if (!urlDatabase[randomString] || !users[randomString]) {
       break;
     }
@@ -203,4 +225,14 @@ function getUserByEmail(email) {
     }
   }
   return null;
+};
+
+function checkLoggedIn(req, res, next) {
+  const userId = req.cookies["user_id"];
+
+  if (userId && users[userId]) {
+    next();
+  } else {
+    res.redirect("/login?redirected=unauthorized");
+  }
 };
