@@ -18,18 +18,25 @@
   </head>
   <body>
     <%- include(`partials/_header`) %>
-    <h1>Register</h1>
-    <form action="/register" method="POST">
-      <div class="form-group">
-        <label for="email">Email:</label>
-        <input type="email" name="email" id="email" />
+
+    <div class="container my-4">
+      <h1 class="text-center">Register</h1>
+      <div class="row">
+        <div class="col-md-6 offset-md-3">
+          <form action="/register" method="POST">
+            <div class="form-group">
+              <label for="email">Email:</label>
+              <input type="email" name="email" id="email" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label for="password">Password:</label>
+              <input type="password" name="password" id="password" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary">Register</button>
+          </form>
+        </div>
       </div>
-      <div class="form-group">
-        <label for="password">Password:</label>
-        <input type="password" name="password" id="password" />
-      </div>
-      <button type="submit">Register</button>
-    </form>    
+    </div>
 
     <!-- Bootstrap JS -->
     <script
