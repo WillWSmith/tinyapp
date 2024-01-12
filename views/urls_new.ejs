@@ -21,20 +21,27 @@
   <body>
     <%- include('partials/_header') %>
 
-    <main style="margin: 1em;">
-      <h3>Create TinyURL</h3>
-      <form class="form-inline" action="/urls" method="POST">
-        <div class="form-group mb-2">
-          <label for="longURL">Enter a URL:</label>
-          <input
-            class="form-control"
-            type="text"
-            name="longURL"
-            style="width: 300px; margin: 1em"
-            value="http://"
-          />
-          <button type="submit" class="btn btn-primary">Submit</button>
+    <div class="container my-4">
+      <h3 class="text-center">Create TinyURL</h3>
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <form action="/urls" method="POST">
+            <div class="form-group">
+              <label for="longURL">Enter a URL</label>
+              <input
+                class="form-control"
+                type="text"
+                name="longURL"
+                value="http://"
+              />
+            </div>
+            <div class="text-center">
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+          </form>
         </div>
+      </div>
+    </div>
       </form>
     </main>
     <!-- Bootstrap JS -->
