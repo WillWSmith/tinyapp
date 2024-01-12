@@ -69,7 +69,7 @@
           <% for (let id in urls) { %>
             <tr>
               <td><%= id %></td>
-              <td><%= urls[id] %></td>
+              <td><%= urls[id].longURL %></td>
               <td>
                 <!-- Add an Edit button for each URL -->
                 <form method="GET" action="/urls/<%= id %>">
