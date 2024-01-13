@@ -1,5 +1,7 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
+const bcrypt = require("bcryptjs");
+const salt = bcrypt.genSaltSync(10);
 const app = express();
 const PORT = 8080; // default port 8080
 
@@ -9,30 +11,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // URL DATABASE
-const urlDatabase = {
-  b2xVn2: {
-    longURL: "http://www.lighthouselabs.ca",
-    userID: "000001",
-  },
-  bsm5xK: {
-    longURL: "http://www.google.com",
-    userID: "000002",
-  },
-};
+const urlDatabase = {};
 
 // USER DATABASE
-const users = {
-  userRandomID: {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur",
-  },
-  user2RandomID: {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk",
-  },
-};
+const users = {};
 
 // ROUTES
 
@@ -189,10 +171,9 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-
   const user = getUserByEmail(email);
 
-  if (!user || user.password !== password) {
+  if (!user || !bcrypt.compareSync(password, user.password)) {
     res.status(403).send("Incorrect email or password.");
   }
 
@@ -233,7 +214,8 @@ app.post("/register", (req, res) => {
     return res.status(400).send("Email already in use.");
   }
 
-  const user = { id, email, password };
+  const hashedPassword = bcrypt.hashSync(password, salt);
+  const user = { id, email, password: hashedPassword };
   users[id] = user;
   res.cookie("user_id", id);
   res.redirect("/urls");
