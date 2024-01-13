@@ -3,8 +3,12 @@ const cookieSession = require("cookie-session");
 const bcrypt = require("bcryptjs");
 const salt = bcrypt.genSaltSync(10);
 const app = express();
-const PORT = 8080; // default port 8080
+const PORT = 8080;
 
+// HELPER FUNCTIONS
+const { getUserByEmail } = require("./helpers");
+
+// MIDDLEWARE
 app.set("view engine", "ejs");
 
 app.use(express.urlencoded({ extended: true }));
@@ -175,7 +179,7 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const user = getUserByEmail(email);
+  const user = getUserByEmail(email, users);
 
   if (!user || !bcrypt.compareSync(password, user.password)) {
     res.status(403).send("Incorrect email or password.");
@@ -214,7 +218,7 @@ app.post("/register", (req, res) => {
     res.status(400).send("Please enter an email and password.");
   };
 
-  const existingUser = getUserByEmail(email);
+  const existingUser = getUserByEmail(email, users);
   if (existingUser) {
     return res.status(400).send("Email already in use.");
   }
@@ -245,15 +249,6 @@ function generateRandomString() {
   }
 
   return randomString;
-};
-
-function getUserByEmail(email) {
-  for (const userId in users) {
-    if (users[userId].email === email) {
-      return users[userId];
-    }
-  }
-  return null;
 };
 
 function checkLoggedIn(req, res, next) {
