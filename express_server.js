@@ -95,7 +95,7 @@ app.post("/register", (req, res) => {
 
   if (email === "" || password === "") {
     res.status(400).send("Please enter an email and password.");
-  };
+  }
 
   const existingUser = getUserByEmail(email, users);
   if (existingUser) {
@@ -231,7 +231,7 @@ app.use((req, res) => {
 });
 
 // General Error Handler
-app.use((err, req, res, next) => {
+app.use((err, req, res,) => {
   console.error(err.stack);
   res.status(500).send("500: Internal Server Error");
 });
