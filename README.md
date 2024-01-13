@@ -5,27 +5,27 @@ TinyApp is a full stack web application built with Node and Express that allows 
 ## Final Product
 
 <p align="center">
-  <img src="https://github.com/WillWSmith/tinyapp/blob/master/docs/login-reqs.png?raw=true" alt="Screenshot of Login page">
-  <br>
   Screenshot of Login page when accessed while trying to edit/create URL without logging in
+  <br>
+  <img src="https://github.com/WillWSmith/tinyapp/blob/master/docs/login-reqs.png?raw=true" alt="Screenshot of Login page">
 </p>
 
 <p align="center">
-  <img src="https://github.com/WillWSmith/tinyapp/blob/master/docs/create-url.png?raw=true" alt="Screenshot of URL creation page">
-  <br>
   Screenshot of URL creation page
+  <br>
+  <img src="https://github.com/WillWSmith/tinyapp/blob/master/docs/create-url.png?raw=true" alt="Screenshot of URL creation page">
 </p>
 
 <p align="center">
-  <img src="https://github.com/WillWSmith/tinyapp/blob/master/docs/url-edit.png?raw=true" alt="Screenshot of URL edit page">
-  <br>
   Screenshot of URL edit page
+  <br>
+  <img src="https://github.com/WillWSmith/tinyapp/blob/master/docs/url-edit.png?raw=true" alt="Screenshot of URL edit page">
 </p>
 
 <p align="center">
-  <img src="https://github.com/WillWSmith/tinyapp/blob/master/docs/urls-page.png?raw=true" alt="Screenshot of URLs page">
-  <br>
   Screenshot of URLs page
+  <br>
+  <img src="https://github.com/WillWSmith/tinyapp/blob/master/docs/urls-page.png?raw=true" alt="Screenshot of URLs page">
 </p>
 
 ## Dependencies
