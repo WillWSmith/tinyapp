@@ -22,7 +22,7 @@
         </p>
         
         <!-- Add the form for updating the long URL -->
-        <form method="POST" action="/urls/<%= id %>">
+        <form method="POST" action="/urls/<%= id %>?_method=PUT">
           <div class="form-group">
             <label for="newLongURL">New Long URL</label>
             <input type="text" class="form-control" id="newLongURL" name="newLongURL" placeholder="Enter new long URL" value="<%= longURL %>">

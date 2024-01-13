@@ -78,7 +78,7 @@
               </td>              
               <td>
                 <!-- Add a form for each shortened URL with a "Delete" button -->
-                <form method="POST" action="/urls/<%= id %>/delete">
+                <form method="POST" action="/urls/<%= id %>?_method=DELETE">
                   <button type="submit" class="btn btn-danger delete-button">Delete</button>
                 </form>
               </td>
