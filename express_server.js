@@ -189,7 +189,7 @@ app.put("/urls/:id", (req, res, next) => {
     return res.status(403).send("Access Denied. You are not the owner of this URL.");
   }
 
-  const newLongURL = req.body.longURL;
+  const newLongURL = req.body.newlongURL;
   urlDatabase[shortURLId].longURL = newLongURL;
   res.redirect("/urls");
 });
