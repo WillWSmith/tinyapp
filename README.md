@@ -7,7 +7,7 @@ TinyApp is a full stack web application built with Node and Express that allows 
 <p align="center">
   <img src="https://github.com/WillWSmith/tinyapp/blob/master/docs/login-reqs.png?raw=true" alt="Screenshot of Login page">
   <br>
-  Screenshot of Login page
+  Screenshot of Login page when accessed while trying to edit/create URL without logging in
 </p>
 
 <p align="center">
