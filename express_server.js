@@ -6,7 +6,7 @@ const app = express();
 const PORT = 8080;
 
 // HELPER FUNCTIONS
-const { getUserByEmail } = require("./helpers");
+const { getUserByEmail, generateRandomString } = require("./helpers");
 
 // MIDDLEWARE
 app.set("view engine", "ejs");
@@ -94,7 +94,7 @@ app.post("/urls", checkLoggedIn, (req, res) => {
     return res.status(400).send("Invalid URL");
   }
 
-  const shortURL = generateRandomString();
+  const shortURL = generateRandomString(urlDatabase);
   urlDatabase[shortURL] = { longURL, userID: userId };
 
   res.redirect(`/urls/${shortURL}`);
@@ -210,7 +210,7 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   console.log(req.session);
-  const id = generateRandomString();
+  const id = generateRandomString(users);
   const email = req.body.email;
   const password = req.body.password;
 
@@ -231,25 +231,6 @@ app.post("/register", (req, res) => {
 });
 
 // FUNCTIONS
-// generates a random unique id
-function generateRandomString() {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let randomString;
-  // ensures no unique id will show up more than once
-  while (true) {
-    randomString = ``;
-    for (let i = 0; i < 6; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length)
-      randomString += characters.charAt(randomIndex);
-    }
-    // exit the loop if the generated string does not exist in the database
-    if (!urlDatabase[randomString] || !users[randomString]) {
-      break;
-    }
-  }
-
-  return randomString;
-};
 
 function checkLoggedIn(req, res, next) {
   const userId = req.session.user_id;
