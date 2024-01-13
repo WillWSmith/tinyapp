@@ -24,4 +24,24 @@ function generateRandomString(database, maxAttempts = 100) {
   throw new Error("Could not generate a unique string");
 };
 
-module.exports = { getUserByEmail, generateRandomString };
+function checkLoggedIn(req, res, next, users) {
+  const userId = req.session.user_id;
+
+  if (userId && users[userId]) {
+    next();
+  } else {
+    res.redirect("/login?redirected=unauthorized");
+  }
+};
+
+function urlsForUser(id, urlDatabase) {
+  const userUrls = {};
+  for (const shortURL in urlDatabase) {
+    if (urlDatabase[shortURL].userID === id) {
+      userUrls[shortURL] = urlDatabase[shortURL];
+    }
+  }
+  return userUrls;
+}
+
+module.exports = { getUserByEmail, generateRandomString, checkLoggedIn, urlsForUser };

@@ -6,7 +6,7 @@ const app = express();
 const PORT = 8080;
 
 // HELPER FUNCTIONS
-const { getUserByEmail, generateRandomString } = require("./helpers");
+const { getUserByEmail, generateRandomString, checkLoggedIn, urlsForUser } = require("./helpers");
 
 // MIDDLEWARE
 app.set("view engine", "ejs");
@@ -27,7 +27,13 @@ const users = {};
 // ROUTES
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  const userId = req.session.user_id;
+  const user = users[userId];
+  if (userId && user) {
+    res.redirect("/urls");
+  } else {
+    res.redirect("/login");
+  }
 });
 
 app.listen(PORT, () => {
@@ -38,7 +44,9 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-app.get("/urls/new", checkLoggedIn, (req, res) => {
+app.get("/urls/new", (req, res, next) => {
+  checkLoggedIn(req, res, next, users);
+}, (req, res) => {
   const userId = req.session.user_id;
   const user = users[userId];
 
@@ -60,7 +68,7 @@ app.get("/urls", (req, res) => {
     return res.status(401).send("You must be logged in to view URLs. Please <a href='/login'>login</a> or <a href='/register'>register</a>.");
   }
 
-  const userUrls = urlsForUser(userId);
+  const userUrls = urlsForUser(userId, urlDatabase);
   const templateVars = {
     user,
     urls: userUrls,
@@ -85,11 +93,12 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-app.post("/urls", checkLoggedIn, (req, res) => {
+app.post("/urls", (req, res, next) => {
+  checkLoggedIn(req, res, next, users);
+}, (req, res) => {
   let longURL = req.body.longURL;
   const userId = req.session.user_id;
 
-  // Check if longURL is undefined or an empty string
   if (!longURL || longURL.trim() === "") {
     return res.status(400).send("Invalid URL");
   }
@@ -120,14 +129,12 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect("/urls");
 });
 
-app.post("/urls/:id", checkLoggedIn, (req, res) => {
+app.post("/urls/:id", (req, res, next) => {
+  checkLoggedIn(req, res, next, users);
+}, (req, res) => {
   const shortURLId = req.params.id;
   const userId = req.session.user_id;
   const urlEntry = urlDatabase[shortURLId];
-
-  if (!userId) {
-    return res.status(401).send("You must be logged in to edit URLs. Please <a href='/login'>login</a> or <a href='/register'>register</a>.");
-  }
 
   if (!urlEntry) {
     return res.status(404).send("Short URL not found");
@@ -139,7 +146,6 @@ app.post("/urls/:id", checkLoggedIn, (req, res) => {
 
   const newLongURL = req.body.longURL;
   urlDatabase[shortURLId].longURL = newLongURL;
-  // Redirect the client back to the /urls page
   res.redirect("/urls");
 });
 
@@ -160,7 +166,7 @@ app.get("/login", (req, res) => {
 
   let message = null;
   if (redirectedReason === "unauthorized") {
-    message = "You must be logged in to create a new URL.";
+    message = "You must be logged in to create or edit a URL.";
   }
 
   if (userId && users[userId]) {
@@ -229,25 +235,3 @@ app.post("/register", (req, res) => {
   req.session.user_id = id;
   res.redirect("/urls");
 });
-
-// FUNCTIONS
-
-function checkLoggedIn(req, res, next) {
-  const userId = req.session.user_id;
-
-  if (userId && users[userId]) {
-    next();
-  } else {
-    res.redirect("/login?redirected=unauthorized");
-  }
-};
-
-function urlsForUser(id) {
-  const userUrls = {};
-  for (const shortURL in urlDatabase) {
-    if (urlDatabase[shortURL].userID === id) {
-      userUrls[shortURL] = urlDatabase[shortURL];
-    }
-  }
-  return userUrls;
-}
